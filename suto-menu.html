@@ -9,27 +9,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #14100d;
-    --bg-soft: #1c1610;
-    --line: #33291d;
-    --cream: #f2e9dc;
-    --muted: #a3937f;
-    --gold: #d9a75a;
-    --gold-dim: #8c703f;
+    --bg: #0F2748;
+    --bg-soft: #16335E;
+    --line: #274877;
+    --cream: #EAF2FB;
+    --muted: #8FA8C9;
+    --gold: #4C86D6;
+    --gold-dim: #2C63A8;
     --veg: #4caf6a;
-    --chili: #c1552f;
+    --chili: #C1442B;
     --bar1: 60px;
     --bar2: 46px;
     --bar3: 46px;
   }
   html[data-theme="light"]{
-    --bg: #f7f1e6;
-    --bg-soft: #efe6d5;
-    --line: #ddceac;
-    --cream: #2a2117;
-    --muted: #7a6a54;
-    --gold: #a9702f;
-    --gold-dim: #c79a5e;
+    --bg: #EAF2FB;
+    --bg-soft: #DCE9F7;
+    --line: #C3D8F0;
+    --cream: #122038;
+    --muted: #5A7196;
+    --gold: #2C63A8;
+    --gold-dim: #4C86D6;
   }
   *{ box-sizing: border-box; }
   html{ scroll-behavior: smooth; }
@@ -147,11 +147,11 @@
     height: var(--bar1);
     display: flex; align-items: center; gap: 0.6rem;
     padding: 0 1.2rem;
-    background: rgba(20,16,13,0.94);
+    background: rgba(15,39,72,0.94);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid var(--line);
   }
-  html[data-theme="light"] .searchbar{ background: rgba(247,241,230,0.94); }
+  html[data-theme="light"] .searchbar{ background: rgba(234,242,251,0.94); }
   .searchbar svg{ color: var(--muted); flex-shrink:0; }
   .searchbar input{
     flex: 1;
@@ -200,14 +200,14 @@
     min-height: var(--bar3);
     display: flex; align-items: center; gap: 0.35rem;
     padding: 0.55rem 1.2rem;
-    background: rgba(20,16,13,0.92);
+    background: rgba(15,39,72,0.92);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid var(--line);
     overflow-x: auto;
     white-space: nowrap;
     scrollbar-width: none;
   }
-  html[data-theme="light"] nav.subnav{ background: rgba(247,241,230,0.92); }
+  html[data-theme="light"] nav.subnav{ background: rgba(234,242,251,0.92); }
   nav.subnav::-webkit-scrollbar{ display:none; }
   nav.subnav a{
     display: inline-flex; align-items: center; gap: 0.35rem;
