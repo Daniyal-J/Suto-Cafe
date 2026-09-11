@@ -239,49 +239,57 @@
   }
   .crosslinks a:hover{ border-color:var(--suto-blue); }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div id="app" class="app"></div>
 
 <script>
-/* ---------------- storage helpers ---------------- */
-const CONFIG_KEY = 'suto:config';
+/* ---------------- firebase setup ---------------- */
+const firebaseConfig = {
+  apiKey: "AIzaSyDQrQlE_TkADpPY2c4_XoaL5RIKDhqtJ6Y",
+  authDomain: "suto-cafe-4f800.firebaseapp.com",
+  projectId: "suto-cafe-4f800",
+  storageBucket: "suto-cafe-4f800.firebasestorage.app",
+  messagingSenderId: "579134526003",
+  appId: "1:579134526003:web:e2018616c877e37c3f0946"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ---------------- storage helpers (Firestore) ---------------- */
 const STAFF_PIN = '2580';
 const REVIEW_URL = 'https://www.google.com/maps/place/?q=place_id:ChIJ-Wcu803XyTsRiVZAQSPcSj8';
 
 async function getConfig(){
   try{
-    const r = await window.storage.get(CONFIG_KEY, true);
-    return r ? JSON.parse(r.value) : { cardSize: 7 };
-  }catch(e){ return { cardSize: 7 }; }
+    const doc = await db.collection('config').doc('main').get();
+    return doc.exists ? doc.data() : { cardSize: 7 };
+  }catch(e){ console.error('getConfig failed', e); return { cardSize: 7 }; }
 }
 async function setConfig(cfg){
-  await window.storage.set(CONFIG_KEY, JSON.stringify(cfg), true);
+  try{
+    await db.collection('config').doc('main').set(cfg);
+  }catch(e){ console.error('setConfig failed', e); }
 }
-function custKey(phone){ return 'suto:customer:' + phone.trim(); }
 
 async function getCustomer(phone){
   try{
-    const r = await window.storage.get(custKey(phone), true);
-    return r ? JSON.parse(r.value) : null;
-  }catch(e){ return null; }
+    const doc = await db.collection('customers').doc(phone.trim()).get();
+    return doc.exists ? doc.data() : null;
+  }catch(e){ console.error('getCustomer failed', e); return null; }
 }
 async function saveCustomer(c){
-  await window.storage.set(custKey(c.phone), JSON.stringify(c), true);
+  try{
+    await db.collection('customers').doc(c.phone.trim()).set(c);
+  }catch(e){ console.error('saveCustomer failed', e); }
 }
 async function listCustomers(){
   try{
-    const r = await window.storage.list('suto:customer:', true);
-    if(!r || !r.keys) return [];
-    const out = [];
-    for(const k of r.keys){
-      try{
-        const v = await window.storage.get(k, true);
-        if(v) out.push(JSON.parse(v.value));
-      }catch(e){}
-    }
-    return out.sort((a,b)=> (b.lastVisit||0) - (a.lastVisit||0));
-  }catch(e){ return []; }
+    const snap = await db.collection('customers').orderBy('lastVisit', 'desc').get();
+    return snap.docs.map(d => d.data());
+  }catch(e){ console.error('listCustomers failed', e); return []; }
 }
 
 function todayStr(){ return new Date().toISOString().slice(0,10); }
