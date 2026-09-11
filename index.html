@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suto Cafe — Raichur</title>
+<meta name="description" content="Suto Cafe, Raichur — coffee, pizza and all-day snacks, Jee Bhar Ke.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2748;
+    --blue:#2C63A8;
+    --blue-bright:#4C86D6;
+    --sky:#EAF2FB;
+    --white:#FFFFFF;
+    --ink:#122038;
+    --tomato:#C1442B;
+    --line:rgba(15,39,72,0.12);
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--white); color:var(--ink);
+    font-family:'Inter', sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2', sans-serif; font-weight:700; margin:0;}
+  a{color:inherit;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- nav ---------- */
+  header.site{position:sticky; top:0; z-index:50; background:rgba(255,255,255,0.94); backdrop-filter:blur(6px); border-bottom:1px solid var(--line);}
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1140px; margin:0 auto;}
+  .nav .mark{font-family:'Baloo 2'; font-weight:800; font-size:1.6rem; color:var(--blue); display:flex; align-items:baseline; gap:10px; text-decoration:none;}
+  .nav .mark span{font-family:'Inter'; font-weight:600; font-size:0.62rem; color:var(--tomato); letter-spacing:0.03em; text-transform:uppercase;}
+  .nav ul{list-style:none; display:flex; gap:26px; margin:0; padding:0;}
+  .nav ul a{text-decoration:none; font-size:0.92rem; font-weight:500; color:var(--ink); position:relative;}
+  .nav ul a:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--blue);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .25s ease;}
+  .nav ul a:hover:after{transform:scaleX(1);}
+  .nav-toggle{display:none;background:none;border:none;font-size:1.4rem;color:var(--blue);cursor:pointer;}
+
+  .btn{display:inline-flex; align-items:center; gap:8px; padding:13px 26px; border-radius:100px; font-size:0.92rem; text-decoration:none; border:1.5px solid transparent; cursor:pointer; font-family:'Inter'; font-weight:600;}
+  .btn-primary{background:var(--blue); color:var(--white);}
+  .btn-primary:hover{background:var(--navy);}
+  .btn-ghost{border-color:rgba(255,255,255,0.55); color:var(--white);}
+  .btn-ghost:hover{border-color:var(--white); background:rgba(255,255,255,0.1);}
+  .btn-outline{border-color:var(--blue); color:var(--blue);}
+  .btn-outline:hover{background:var(--sky);}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; min-height:88vh; display:flex; align-items:flex-end; overflow:hidden; background:var(--navy);}
+  .hero img.bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0.78;}
+  .hero:after{content:""; position:absolute; inset:0; background:linear-gradient(0deg, rgba(15,39,72,0.94) 5%, rgba(15,39,72,0.45) 55%, rgba(15,39,72,0.15) 100%);}
+  .hero-inner{position:relative; z-index:2; padding:70px 0 64px; width:100%;}
+  .hero-inner .wrap{max-width:1140px;}
+  .balloon{position:absolute; border-radius:50%; z-index:2; opacity:0; animation:floatIn 1s ease forwards;}
+  .balloon.b1{width:26px;height:26px;background:var(--blue-bright);top:18%;left:10%; animation-delay:.3s;}
+  .balloon.b2{width:16px;height:16px;background:var(--tomato);top:30%;left:22%; animation-delay:.5s;}
+  .balloon.b3{width:20px;height:20px;background:var(--blue-bright);top:14%;left:78%; animation-delay:.4s;}
+  @keyframes floatIn{from{opacity:0; transform:translateY(18px);} to{opacity:0.85; transform:translateY(0);}}
+
+  .hero-eyebrow{color:#BFD6F2; font-size:0.9rem; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:10px;}
+  .hero-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--tomato); display:inline-block;}
+  .hero h1{font-size:clamp(2.8rem,7vw,5.2rem); color:var(--white); line-height:0.98; max-width:11ch;
+    opacity:0; animation:riseIn .9s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:.15s;}
+  .hero p.lede{margin-top:20px; max-width:44ch; color:#D8E5F5; font-size:1.08rem;
+    opacity:0; animation:riseIn .9s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:.35s;}
+  .hero-cta{margin-top:30px; display:flex; gap:16px; flex-wrap:wrap;
+    opacity:0; animation:riseIn .9s cubic-bezier(.2,.7,.2,1) forwards; animation-delay:.5s;}
+  @keyframes riseIn{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- section basics ---------- */
+  section{padding:100px 0;}
+  .section-head{max-width:58ch; margin-bottom:52px;}
+  .section-head .kicker{color:var(--tomato); font-weight:600; font-size:0.88rem; margin-bottom:10px; display:block;}
+  .section-head h2{font-size:clamp(1.9rem,3.6vw,2.7rem); line-height:1.08; color:var(--navy);}
+  .section-head p{margin-top:16px; color:rgba(18,32,56,0.66); font-size:1.03rem;}
+
+  /* ---------- about ---------- */
+  .about{background:var(--sky);}
+  .about .wrap{display:grid; grid-template-columns:0.95fr 1.05fr; gap:56px; align-items:center;}
+  .about-photo{position:relative;}
+  .about-photo img{border-radius:var(--radius); box-shadow:0 20px 50px -20px rgba(15,39,72,0.35);}
+  .about-photo .blob{position:absolute; width:70px; height:70px; border-radius:50%; background:var(--tomato); top:-22px; right:-18px; z-index:-1; opacity:0.85;}
+  .about-copy p{color:rgba(18,32,56,0.72); font-size:1.04rem; margin-top:16px;}
+  .about-stats{display:flex; gap:38px; margin-top:32px; flex-wrap:wrap;}
+  .about-stats div strong{font-family:'Baloo 2'; font-size:2rem; display:block; color:var(--blue);}
+  .about-stats div span{font-size:0.82rem; color:rgba(18,32,56,0.6);}
+
+  /* ---------- menu ---------- */
+  .menu-note{background:rgba(44,99,168,0.08); border:1px solid rgba(44,99,168,0.25); color:var(--blue); font-size:0.88rem; padding:12px 16px; border-radius:8px; margin-bottom:40px; font-weight:500;}
+  .menu-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  .menu-card{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--white);}
+  .menu-card .photo{aspect-ratio:4/3; overflow:hidden;}
+  .menu-card .photo img{width:100%; height:100%; object-fit:cover;}
+  .menu-card .info{padding:16px 18px;}
+  .menu-card .info .row{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+  .menu-card .name{font-weight:600; font-size:1rem;}
+  .menu-card .price{font-family:'Baloo 2'; color:var(--blue); font-weight:700; white-space:nowrap;}
+  .menu-card .desc{font-size:0.85rem; color:rgba(18,32,56,0.58); margin-top:4px;}
+
+  /* ---------- gallery ---------- */
+  .gallery{background:var(--navy);}
+  .gallery .section-head h2{color:var(--white);}
+  .gallery .section-head p{color:#B9CBE6;}
+  .gallery-grid{display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:170px; gap:10px;}
+  .gallery-grid div{border-radius:8px; overflow:hidden;}
+  .gallery-grid img{width:100%; height:100%; object-fit:cover; transition:transform .5s ease;}
+  .gallery-grid div:hover img{transform:scale(1.06);}
+  .gallery-grid div:nth-child(1){grid-column:span 2; grid-row:span 2;}
+  .gallery-grid div:nth-child(4){grid-column:span 2;}
+
+  /* ---------- reviews ---------- */
+  .reviews{background:var(--white);}
+  .rating-strip{display:flex; align-items:center; gap:18px; margin-bottom:44px; flex-wrap:wrap;}
+  .rating-num{font-family:'Baloo 2'; font-size:2.6rem; color:var(--navy);}
+  .stars{color:var(--tomato); font-size:1.15rem; letter-spacing:2px;}
+  .rating-strip .meta{font-size:0.88rem; color:rgba(18,32,56,0.6);}
+  .review-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .review-card{background:var(--sky); border-radius:var(--radius); padding:26px 24px;}
+  .review-card .quote-mark{font-family:'Baloo 2'; font-size:2.2rem; color:var(--blue); line-height:0.5; display:block; margin-bottom:10px;}
+  .review-card p{font-size:0.95rem; color:rgba(18,32,56,0.82);}
+  .review-card .who{margin-top:16px; font-size:0.8rem; color:var(--blue); font-weight:600;}
+
+  /* ---------- visit / footer ---------- */
+  .visit{background:var(--sky);}
+  .visit .wrap{display:grid; grid-template-columns:1fr 1fr; gap:56px;}
+  .visit-info h2{font-size:clamp(1.9rem,3.6vw,2.5rem); margin-bottom:24px; color:var(--navy);}
+  .visit-block{margin-bottom:26px;}
+  .visit-block h4{font-size:0.78rem; color:var(--tomato); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em;}
+  .visit-block p{margin:0; font-size:1rem;}
+  .visit-block a{text-decoration:none; border-bottom:1.5px solid var(--line);}
+  .map-frame{border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); aspect-ratio:4/3;}
+  .map-frame iframe{width:100%; height:100%; border:0;}
+
+  footer{background:var(--navy); color:#9FB7DA; padding:40px 0; font-size:0.85rem;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+  footer .mark{font-family:'Baloo 2'; color:var(--white); font-size:1.15rem; font-weight:800;}
+
+  @media (max-width: 860px){
+    .nav ul{position:fixed; top:60px; left:0; right:0; background:var(--white); flex-direction:column; padding:20px 28px; gap:18px; border-bottom:1px solid var(--line); display:none;}
+    .nav ul.open{display:flex;}
+    .nav-toggle{display:block;}
+    .about .wrap{grid-template-columns:1fr;}
+    .menu-grid{grid-template-columns:1fr 1fr;}
+    .gallery-grid{grid-template-columns:repeat(2,1fr); grid-auto-rows:140px;}
+    .review-row{grid-template-columns:1fr;}
+    .visit .wrap{grid-template-columns:1fr;}
+  }
+  @media (max-width: 560px){
+    .menu-grid{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero h1, .hero p.lede, .hero-cta, .balloon{animation:none; opacity:1;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav class="nav">
+    <a class="mark" href="#top">SUTO <span>Jee Bhar Ke</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu" onclick="document.getElementById('navlinks').classList.toggle('open')">☰</button>
+    <ul id="navlinks">
+      <li><a href="#about">About</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#visit">Visit</a></li>
+      <li><a href="suto-menu.html">Full Digital Menu</a></li>
+      <li><a href="suto-stamp-card.html">Stamp Card</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero" id="top">
+  <img class="bg" src="images/coffee.jpeg" alt="Two Suto Coffee cups topped with chocolate chips">
+  <span class="balloon b1"></span>
+  <span class="balloon b2"></span>
+  <span class="balloon b3"></span>
+  <div class="hero-inner">
+    <div class="wrap">
+      <span class="hero-eyebrow"><span class="dot"></span> Mantralayam Road, Raichur</span>
+      <h1>Jee Bhar Ke.</h1>
+      <p class="lede">Coffee, pizza and all-day snacks in a bright, easygoing space in Raichur — come hungry, stay a while, leave full.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#menu">See the menu</a>
+        <a class="btn btn-ghost" href="suto-stamp-card.html">Collect stamps</a>
+        <a class="btn btn-ghost" href="#visit">Get directions</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="about-photo">
+      <span class="blob"></span>
+      <img src="images/interior-1.jpeg" alt="Suto Cafe seating area with blue striped walls and balloons">
+    </div>
+    <div class="about-copy">
+      <span class="hero-eyebrow" style="color:var(--tomato);"><span class="dot"></span> Our story</span>
+      <h2 class="display" style="font-size:clamp(1.9rem,3.4vw,2.5rem); color:var(--navy);">A blue-and-white corner made for hanging out.</h2>
+      <p>Suto Cafe sits just off Mantralayam Road, near IB Road, and has quickly become a regular stop for students, families and colleagues. The space is bright and a little playful — striped walls, round mirrors, balloons on the good days — built for sitting down properly rather than grabbing a quick cup.</p>
+      <p>Everything is made to order, service stays warm and attentive, and the space is kept genuinely clean and cared for — the details regulars bring up most often.</p>
+      <div class="about-stats">
+        <div><strong>4.0★</strong><span>Google rating</span></div>
+        <div><strong>36</strong><span>Google reviews</span></div>
+        <div><strong>10–10</strong><span>Open daily</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="menu">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">On the table</span>
+      <h2>Menu</h2>
+      <p>A few signatures from Suto's own kitchen. Share the full price list and this section gets filled out completely.</p>
+    </div>
+    <div class="menu-note">Dish photos are real — prices are placeholders until you confirm them.</div>
+    <a class="btn btn-outline" href="suto-menu.html" style="margin-bottom:32px;">Browse the full digital menu →</a>
+    <div class="menu-grid">
+      <div class="menu-card">
+        <div class="photo"><img src="images/pizza.jpeg" alt="Paneer and cheese pizzas on wooden boards"></div>
+        <div class="info">
+          <div class="row"><span class="name">Paneer Pizza</span><span class="price">₹220</span></div>
+          <div class="desc">Peppers, onion, cottage cheese, mozzarella</div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="photo"><img src="images/pizza.jpeg" alt="Cheese pizza with oregano and chilli flakes"></div>
+        <div class="info">
+          <div class="row"><span class="name">Cheese Pizza</span><span class="price">₹180</span></div>
+          <div class="desc">Loaded mozzarella, oregano, chilli flakes</div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="photo"><img src="images/fries.jpeg" alt="Plate of french fries with ketchup"></div>
+        <div class="info">
+          <div class="row"><span class="name">French Fries</span><span class="price">₹100</span></div>
+          <div class="desc">Crisp, salted, served with ketchup</div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="photo"><img src="images/coffee.jpeg" alt="Suto choco chip cold coffee in branded cups"></div>
+        <div class="info">
+          <div class="row"><span class="name">Choco Chip Cold Coffee</span><span class="price">₹120</span></div>
+          <div class="desc">Suto's own blend, topped with chocolate chips</div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="photo"><img src="images/brownie.jpeg" alt="Chocolate brownie topped with vanilla ice cream"></div>
+        <div class="info">
+          <div class="row"><span class="name">Brownie &amp; Ice Cream</span><span class="price">₹140</span></div>
+          <div class="desc">Warm fudge brownie, vanilla scoop</div>
+        </div>
+      </div>
+      <div class="menu-card">
+        <div class="photo"><img src="images/interior-2.jpeg" alt="Suto Cafe lounge seating"></div>
+        <div class="info">
+          <div class="row"><span class="name">And more on request</span></div>
+          <div class="desc">Send the full menu to complete this grid</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker" style="color:var(--blue-bright);">A look inside</span>
+      <h2>Gallery</h2>
+      <p>Real shots from the cafe — send more anytime and this grid grows with them.</p>
+    </div>
+    <div class="gallery-grid">
+      <div><img src="images/interior-1.jpeg" alt="Blue striped wall seating area with balloons"></div>
+      <div><img src="images/coffee.jpeg" alt="Two branded Suto coffee cups"></div>
+      <div><img src="images/interior-2.jpeg" alt="Lounge seating with round mirrors"></div>
+      <div><img src="images/pizza.jpeg" alt="Pizzas and fries on the table"></div>
+      <div><img src="images/brownie.jpeg" alt="Brownie with ice cream on a Suto plate"></div>
+    </div>
+  </div>
+</section>
+
+<section class="reviews" id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">What people say</span>
+      <h2>From Google Reviews</h2>
+    </div>
+    <div class="rating-strip">
+      <span class="rating-num">4.0</span>
+      <div>
+        <div class="stars">★★★★☆</div>
+        <div class="meta">Based on 36 Google reviews</div>
+      </div>
+      <a class="btn btn-outline" href="https://www.google.com/maps/place/?q=place_id:ChIJ-Wcu803XyTsRiVZAQSPcSj8" target="_blank" rel="noopener" style="margin-left:auto;">Read all reviews on Google →</a>
+    </div>
+    <div class="review-row">
+      <div class="review-card">
+        <span class="quote-mark">“</span>
+        <p>Visitors often mention how cozy and relaxed the space feels — a good spot to settle in with friends, work quietly, or just unwind. The food and milkshakes are called out as a highlight, with service described as prompt and well looked after.</p>
+        <div class="who">— Google reviewer</div>
+      </div>
+      <div class="review-card">
+        <span class="quote-mark">“</span>
+        <p>Regulars praise the coffee specifically — balanced, refreshing, and well made — alongside a welcoming atmosphere that makes people want to stay a while longer than planned.</p>
+        <div class="who">— Google reviewer</div>
+      </div>
+      <div class="review-card">
+        <span class="quote-mark">“</span>
+        <p>Several reviews describe it as budget-friendly without cutting corners on taste, with more than one person comparing the overall experience favorably to bigger-city cafes.</p>
+        <div class="who">— Google reviewer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="visit" id="visit">
+  <div class="wrap">
+    <div class="visit-info">
+      <span class="hero-eyebrow" style="color:var(--tomato);"><span class="dot"></span> Find us</span>
+      <h2 class="display">Visit Suto Cafe</h2>
+      <div class="visit-block">
+        <h4>Address</h4>
+        <p>AR Arcade, #1-4-183/5, Mohiuddin Colony,<br>Mantralayam Road, SBH Colony,<br>Raichur, Karnataka 584101</p>
+      </div>
+      <div class="visit-block">
+        <h4>Hours</h4>
+        <p>Open daily, 10:00 AM – 10:00 PM</p>
+      </div>
+      <div class="visit-block">
+        <h4>Phone</h4>
+        <p><a href="tel:+918660953452">+91 86609 53452</a></p>
+      </div>
+      <div class="hero-cta" style="margin-top:8px;">
+        <a class="btn btn-primary" href="https://www.google.com/maps/place/?q=place_id:ChIJ-Wcu803XyTsRiVZAQSPcSj8" target="_blank" rel="noopener">Get directions</a>
+        <a class="btn btn-outline" href="tel:+918660953452">Call the cafe</a>
+      </div>
+    </div>
+    <div class="map-frame">
+      <iframe src="https://www.google.com/maps?q=16.189755,77.348572&output=embed" loading="lazy" title="Suto Cafe location map"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mark">SUTO</span>
+    <span>Raichur, Karnataka · Open daily 10 AM – 10 PM</span>
+    <span style="display:flex; gap:18px;">
+      <a href="suto-menu.html" style="text-decoration:none; border-bottom:1px solid rgba(159,183,218,0.4);">Digital Menu</a>
+      <a href="suto-stamp-card.html" style="text-decoration:none; border-bottom:1px solid rgba(159,183,218,0.4);">Stamp Card</a>
+      <a href="https://www.google.com/maps/place/?q=place_id:ChIJ-Wcu803XyTsRiVZAQSPcSj8" target="_blank" rel="noopener" style="text-decoration:none; border-bottom:1px solid rgba(159,183,218,0.4);">Leave a Review</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>

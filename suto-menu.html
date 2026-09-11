@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUTO — Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14100d;
+    --bg-soft: #1c1610;
+    --line: #33291d;
+    --cream: #f2e9dc;
+    --muted: #a3937f;
+    --gold: #d9a75a;
+    --gold-dim: #8c703f;
+    --veg: #4caf6a;
+    --chili: #c1552f;
+    --bar1: 60px;
+    --bar2: 46px;
+    --bar3: 46px;
+  }
+  html[data-theme="light"]{
+    --bg: #f7f1e6;
+    --bg-soft: #efe6d5;
+    --line: #ddceac;
+    --cream: #2a2117;
+    --muted: #7a6a54;
+    --gold: #a9702f;
+    --gold-dim: #c79a5e;
+  }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ transition: none !important; animation: none !important; }
+  }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background .3s ease, color .3s ease;
+  }
+  svg{ display:block; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position: relative;
+    padding: 3.6rem 1.5rem 2.6rem;
+    text-align: center;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 50% -10%, rgba(217,167,90,0.18), transparent 60%),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-art{
+    width: 84px; height: 84px;
+    margin: 0 auto 1.2rem;
+    color: var(--gold);
+    opacity: 0.95;
+  }
+
+  .group-banner{
+    width: 100%;
+    height: 108px;
+    border-radius: 10px;
+    margin: 1rem 0 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    border: 1px solid var(--line);
+  }
+  .group-banner svg{
+    width: 40px; height: 40px;
+    color: var(--gold);
+    opacity: 0.85;
+  }
+  .theme-toggle{
+    position: absolute;
+    top: 1.1rem; right: 1.1rem;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items:center; justify-content:center;
+  }
+  .theme-toggle:hover{ color: var(--gold); border-color: var(--gold-dim); }
+  .crosslinks{
+    position: absolute;
+    top: 1.1rem; left: 1.1rem;
+    display: flex; gap: 8px;
+    z-index: 3;
+  }
+  .crosslinks a{
+    display:flex; align-items:center; gap:5px;
+    padding: 7px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.76rem;
+    font-weight: 500;
+    background: transparent;
+  }
+  .crosslinks a:hover{ color: var(--gold); border-color: var(--gold-dim); }
+  .ring{
+    position: relative;
+    width: 70px; height: 70px;
+    margin: 0 auto 1.4rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ring::after{
+    content:"";
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: .85;
+  }
+  .hero h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 8vw, 4rem);
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--cream);
+  }
+  .hero p{
+    margin: 0.8rem auto 0;
+    max-width: 32ch;
+    color: var(--muted);
+    font-size: 0.96rem;
+    line-height: 1.6;
+  }
+
+  /* ---------- Sticky bars ---------- */
+  .searchbar{
+    position: sticky; top: 0; z-index: 30;
+    height: var(--bar1);
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0 1.2rem;
+    background: rgba(20,16,13,0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  html[data-theme="light"] .searchbar{ background: rgba(247,241,230,0.94); }
+  .searchbar svg{ color: var(--muted); flex-shrink:0; }
+  .searchbar input{
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--cream);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 0.98rem;
+  }
+  .searchbar input::placeholder{ color: var(--muted); }
+  .searchbar .clear{
+    background:none; border:none; color: var(--muted); cursor:pointer;
+    display:none; padding: 0.2rem;
+  }
+  .searchbar .clear.show{ display:flex; }
+
+  nav.grouptabs{
+    position: sticky; top: var(--bar1); z-index: 29;
+    height: var(--bar2);
+    display: flex; align-items: center; gap: 0.4rem;
+    padding: 0 1.2rem;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  nav.grouptabs button{
+    font-family: 'Fraunces', serif;
+    font-size: 0.98rem;
+    font-weight: 500;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0.3rem 0.2rem;
+    border-bottom: 2px solid transparent;
+  }
+  nav.grouptabs button.active{
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  nav.subnav{
+    position: sticky; top: calc(var(--bar1) + var(--bar2)); z-index: 28;
+    min-height: var(--bar3);
+    display: flex; align-items: center; gap: 0.35rem;
+    padding: 0.55rem 1.2rem;
+    background: rgba(20,16,13,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+  html[data-theme="light"] nav.subnav{ background: rgba(247,241,230,0.92); }
+  nav.subnav::-webkit-scrollbar{ display:none; }
+  nav.subnav a{
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.84rem;
+    padding: 0.38rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  nav.subnav a svg{ width:15px; height:15px; }
+  nav.subnav a.active{
+    color: var(--gold);
+    border-color: var(--gold-dim);
+  }
+
+  /* ---------- Content ---------- */
+  main{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+  }
+  .group-block.hidden, .category.hidden, ul.items li.hidden{ display: none !important; }
+
+  .group-title{
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin: 3.2rem 0 0.2rem;
+  }
+  .group-block:first-child .group-title{ margin-top: 2rem; }
+  .group-sub{
+    color: var(--muted);
+    font-size: 0.87rem;
+    margin-bottom: 1.5rem;
+  }
+  section.category{
+    scroll-margin-top: calc(var(--bar1) + var(--bar2) + var(--bar3) + 0.8rem);
+    padding-top: 1.7rem;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  section.category.in-view{ opacity: 1; transform: translateY(0); }
+  section.category:first-of-type{ padding-top: 0.4rem; }
+
+  .cat-heading{
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.9rem;
+  }
+  .cat-heading svg{ width:16px; height:16px; color: var(--gold); }
+
+  ul.items{ list-style: none; margin: 0 0 0.5rem; padding: 0; }
+  ul.items li{
+    padding: 0.6rem 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  ul.items li:last-child{ border-bottom: none; }
+  .row{
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .veg{
+    flex-shrink: 0;
+    width: 11px; height: 11px;
+    border: 1.3px solid var(--veg);
+    position: relative;
+    top: 1px;
+  }
+  .veg::after{
+    content:"";
+    position:absolute;
+    width: 5px; height: 5px;
+    background: var(--veg);
+    border-radius: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  .item-name{
+    font-size: 1rem;
+    color: var(--cream);
+    font-weight: 500;
+  }
+  .spice{ color: var(--chili); flex-shrink:0; width:13px; height:13px; }
+  .leader{
+    flex: 1;
+    border-bottom: 1px dotted var(--gold-dim);
+    height: 0;
+    margin-bottom: 0.35rem;
+  }
+  .price{
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .item-desc{
+    margin: 0.2rem 0 0 1.6rem;
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.4;
+  }
+  .badge{
+    display: inline-block;
+    margin-left: 1.6rem;
+    margin-top: 0.3rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  .addon{ margin-top: 0.9rem; font-size: 0.86rem; color: var(--muted); }
+  .addon b{ color: var(--cream); font-weight: 500; }
+  .addon-row{ display:inline-block; margin-right: 1rem; }
+
+  .no-results{
+    text-align:center;
+    color: var(--muted);
+    padding: 3rem 1rem;
+    font-size: 0.95rem;
+    display: none;
+  }
+  .no-results.show{ display:block; }
+
+  .backtotop{
+    position: fixed;
+    right: 1.1rem; bottom: 1.4rem;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    display: flex; align-items:center; justify-content:center;
+    cursor: pointer;
+    opacity: 0; visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity .25s ease, transform .25s ease, visibility .25s;
+    z-index: 40;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+  .backtotop.show{ opacity: 1; visibility: visible; transform: translateY(0); }
+
+  footer{
+    text-align: center;
+    padding: 2.4rem 1.5rem 3rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    border-top: 1px solid var(--line);
+  }
+  footer .mark{
+    font-family:'Fraunces', serif;
+    color: var(--gold);
+    font-size: 1.1rem;
+    display:block;
+    margin-bottom: 0.5rem;
+  }
+  footer .legend{
+    margin-top: 1rem;
+    display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap;
+    font-size: 0.78rem;
+  }
+  footer .legend span{ display:inline-flex; align-items:center; gap: 0.4rem; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="crosslinks">
+    <a href="index.html">← Home</a>
+    <a href="suto-stamp-card.html">Stamp card</a>
+  </div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme">
+    <svg id="iconMoon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 11.5A6.5 6.5 0 0 1 8.5 4 6.5 6.5 0 1 0 16 11.5z"/></svg>
+  </button>
+  <svg class="hero-art" viewBox="0 0 84 84" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 34h32v20a12 12 0 0 1-12 12H34a12 12 0 0 1-12-12V34z"/>
+    <path d="M54 38h6a7 7 0 0 1 0 14h-6"/>
+    <path d="M30 26c-2-3-2-6 1-9M38 26c-2-4-2-7 2-11M47 26c-2-3-2-6 1-9" opacity="0.7"/>
+  </svg>
+  <h1>SUTO</h1>
+  <p>All-day café · coffee, shakes &amp; comfort food. Prices in ₹, taxes as applicable.</p>
+</header>
+
+<div class="searchbar">
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M17 17l-4-4"/></svg>
+  <input type="text" id="searchInput" placeholder="Search the menu…" autocomplete="off">
+  <button class="clear" id="clearSearch" aria-label="Clear search">
+    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5 5l10 10M15 5L5 15"/></svg>
+  </button>
+</div>
+
+<nav class="grouptabs" id="groupTabs"></nav>
+<nav class="subnav" id="subNav"></nav>
+
+<main id="menuMain">
+  <p class="no-results" id="noResults">No dishes match your search.</p>
+</main>
+
+<footer>
+  <span class="mark">SUTO</span>
+  Taxes as applicable · images for representation only
+  <div class="legend">
+    <span><span class="veg" style="top:0"></span> Vegetarian</span>
+    <span><svg class="spice" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6c3-2 8-2 10 2-1 5-6 8-9 6-2-1.5-2-5-1-8z"/></svg> Spicy</span>
+  </div>
+  <div class="legend">
+    <span><a href="index.html" style="color:inherit;">Home</a></span>
+    <span><a href="suto-stamp-card.html" style="color:inherit;">Stamp card</a></span>
+    <span><a href="https://www.google.com/maps/place/?q=place_id:ChIJ-Wcu803XyTsRiVZAQSPcSj8" target="_blank" rel="noopener" style="color:inherit;">Leave a review</a></span>
+  </div>
+</footer>
+
+<button class="backtotop" id="backToTop" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5-5 5 5"/></svg>
+</button>
+
+<script>
+/* ---------------- Icons ---------------- */
+const ICONS = {
+  cup: '<path d="M5 3h9v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V3z"/><path d="M14 6h1.6a2 2 0 0 1 0 4H14"/>',
+  glass: '<path d="M6 3h8l-1 13.2a1 1 0 0 1-1 .8H8a1 1 0 0 1-1-.8L6 3z"/><path d="M6.6 7h6.8"/>',
+  cocktail: '<path d="M4 4h12l-6 7v5"/><path d="M7 16h6"/>',
+  blender: '<path d="M6.5 3h7l-1 12a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1l-1-12z"/><path d="M6 6.5h8"/>',
+  waffle: '<rect x="4" y="4" width="12" height="12" rx="1.5"/><path d="M4 8h12M4 12h12M8 4v12M12 4v12"/>',
+  dessert: '<rect x="4" y="10" width="12" height="4" rx="1"/><path d="M7 10c0-3 2-6 3-6s3 3 3 6"/>',
+  burger: '<path d="M4 7Q10 2 16 7"/><path d="M4 10h12M4 13h12"/><path d="M4 15Q10 18 16 15"/>',
+  sandwich: '<path d="M3 15h14L10 5 3 15z"/><path d="M4.5 12.5h11"/>',
+  fries: '<path d="M6 8h8l-1.2 9H7.2L6 8z"/><path d="M8 8V4M10 8V3M12 8V4"/>',
+  wrap: '<ellipse cx="10" cy="5" rx="4" ry="1.6"/><path d="M6 5v9.5C6 16 8 17 10 17s4-1 4-2.5V5"/>',
+  bowl: '<path d="M4 9a6 6 0 0 0 12 0z"/><path d="M3.5 9h13"/><path d="M8 5.5c0-1 .6-1.8.6-1.8M12 5.5c0-1-.6-1.8-.6-1.8"/>',
+  dumpling: '<path d="M4 10c0-3 3-6 6-6s6 3 6 6-3 6-6 6-6-3-6-6z"/><path d="M6.5 7.5c1-.8 2.2-1.2 3.5-1.2s2.5.4 3.5 1.2"/>',
+  pizza: '<path d="M10 3l7 13H3z"/><circle cx="9" cy="11" r=".8" fill="currentColor" stroke="none"/><circle cx="11.5" cy="13.5" r=".8" fill="currentColor" stroke="none"/>',
+  bread: '<rect x="3" y="7" width="14" height="8" rx="4"/><path d="M7 7.5v7M10 7.5v7M13 7.5v7"/>',
+};
+function icon(name){ return `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`; }
+const spiceIcon = '<svg class="spice" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6c3-2 8-2 10 2-1 5-6 8-9 6-2-1.5-2-5-1-8z"/></svg>';
+
+/* ---------------- Menu data ---------------- */
+const MENU = [
+  { group: 'Beverages', sub: 'Hot, cold & blended.', bannerIcons: ['cup','glass','cocktail','blender'], bannerGrad: 'linear-gradient(120deg, #241a10, #3a2414)', categories: [
+    { id:'espresso', name:'Espresso', icon:'cup', items:[
+      {n:'Espresso', p:59},
+      {n:'Normal Coffee', p:79},
+      {n:'Macchiato', p:89},
+      {n:'Americano', p:109},
+      {n:'Cappuccino', p:139},
+      {n:'Mocha', p:159},
+      {n:'Irish Cappuccino', p:159},
+      {n:'Hazelnut Cappuccino', p:159},
+      {n:'Hot Chocolate', p:159},
+    ]},
+    { id:'cold-coffee', name:'Cold Coffee', icon:'cup', items:[
+      {n:'Classic Cold Coffee', p:119},
+      {n:'Iced Americano', p:119},
+      {n:'Thick Cold Coffee', p:139},
+      {n:'Café Frappe', p:139},
+      {n:'Iced Latte', p:149},
+      {n:'Mocha Frappe', p:169},
+      {n:'Oreo Frappe', p:179},
+      {n:'Brownie Frappe', p:209},
+      {n:'Suto Special Frappe', p:219, tag:'Bestseller', desc:'Our signature blend, finished with a mocha drizzle.'},
+    ]},
+    { id:'ice-tea', name:'Ice Tea', icon:'glass', items:[
+      {n:'Lemon Ice Tea', p:109},
+      {n:'Kiwi Ice Tea', p:119},
+      {n:'Peach Ice Tea', p:119},
+      {n:'Strawberry Ice Tea', p:119},
+    ]},
+    { id:'mocktails', name:'Mocktails', icon:'cocktail', items:[
+      {n:'Lemon Soda', p:109},
+      {n:'Mojito', p:119},
+      {n:'Kiwi Melon', p:119},
+      {n:'Blue Blast', p:119},
+      {n:'Peach Mojito', p:139},
+      {n:'Berry Mojito', p:149},
+    ]},
+    { id:'smoothie', name:'Smoothie', icon:'blender', items:[
+      {n:'Red Blood', p:169},
+      {n:'Mango Coconut', p:169},
+      {n:'Fresh Fruit', p:169},
+      {n:'Strawberry Smoothie', p:169},
+      {n:'Kiwi Smoothie', p:169},
+    ]},
+    { id:'shakes', name:'Shakes', icon:'blender', items:[
+      {n:'Hazelnut Crunchy Shake', p:159},
+      {n:'Strawberry Shake', p:159},
+      {n:'Kitkat Shake', p:169},
+      {n:'Oreo Shake', p:169},
+      {n:'Nutella Chocolate Shake', p:199},
+      {n:'Ferrero Rocher Shake', p:219, desc:'Hazelnut, chocolate and a whole Ferrero Rocher.'},
+    ]},
+  ]},
+
+  { group: 'Dessert', sub: 'Warm waffles & brownies.', bannerIcons: ['waffle', 'dessert'], bannerGrad: 'linear-gradient(120deg, #2a1c10, #40270f)', categories: [
+    { id:'waffles', name:'Waffles', icon:'waffle', items:[
+      {n:'Classic Waffle', p:119},
+      {n:'Chocolate Waffle', p:139},
+      {n:'Brownie Waffle', p:159},
+      {n:'Nutella Waffle', p:169, tag:'Bestseller'},
+      {n:'Hot Kitkat Waffle', p:169},
+    ]},
+    { id:'brownie', name:'Brownie', icon:'dessert', items:[
+      {n:'Brownie', p:159},
+      {n:'Brownie + Ice Cream', p:179},
+    ], addons:[['Chocolate',29],['Ice Cream',39],['Dark Chocolate',49]]},
+  ]},
+
+  { group: 'Food', sub: 'Burgers, sandwiches & more.', bannerIcons: ['burger', 'pizza', 'sandwich', 'fries'], bannerGrad: 'linear-gradient(120deg, #1e1712, #32241a)', categories: [
+    { id:'burger', name:'Burger', icon:'burger', items:[
+      {n:'Aloo Tikki Burger', p:89},
+      {n:'Double Patty Burger', p:99},
+      {n:'Veggie Delight Burger', p:119},
+      {n:'Mexican Burger', p:149},
+      {n:'Suto Special Burger', p:169, tag:'Bestseller', desc:'The house burger, loaded with all the fixings.'},
+    ], addons:[['Cheese Slice',29]]},
+    { id:'sandwich', name:'Sandwich', icon:'sandwich', items:[
+      {n:'Masala Toast Sandwich', p:89},
+      {n:'Cheese Corn Sandwich', p:109},
+      {n:'Mexican Sandwich', p:119},
+      {n:'Grilled Cheese Sandwich', p:119},
+      {n:'Vegetable Club Sandwich', p:149},
+      {n:'Paneer Tikka Sandwich', p:169},
+      {n:'Pizza Sandwich', p:169},
+    ], addons:[['Cheese Slice',29]]},
+    { id:'fries', name:'Fries & Nachos', icon:'fries', items:[
+      {n:'French Fries', p:109},
+      {n:'Peri Peri French Fries', p:119, spicy:true},
+      {n:'Mexican Cheese Fries', p:159},
+      {n:'Mexican Cheesy Nachos', p:179},
+    ], addons:[['Cheese Dip',29],['Jalapeno Dip',29]]},
+    { id:'wraps', name:'Wrap & Rolls', icon:'wrap', items:[
+      {n:'Cheese Potato Wrap', p:119},
+      {n:'Mexican Potato Wrap', p:159},
+      {n:'Paneer Wrap', p:169},
+      {n:'Suto Special Wrap', p:179, desc:'Everything good about Suto, rolled into one.'},
+    ]},
+    { id:'maggi', name:'Maggi', icon:'bowl', items:[
+      {n:'Plain Maggi', p:79},
+      {n:'Double Masala Maggi', p:89},
+      {n:'Schezwan Masala Maggi', p:99, spicy:true},
+      {n:'Veg Maggi', p:119},
+      {n:'Cheese Butter Maggi', p:119},
+      {n:'Tandoori Maggi', p:139, spicy:true},
+      {n:'Italian Maggi', p:139},
+      {n:'Cheese Veg And Corn', p:139},
+    ]},
+    { id:'pasta', name:'Pasta', icon:'bowl', items:[
+      {n:'Red Sauce Pasta', p:159},
+      {n:'White Sauce Pasta', p:169},
+      {n:'Mix Sauce Pasta', p:179},
+      {n:'Cheese Red Sauce Pasta', p:199},
+      {n:'Cheese White Sauce Pasta', p:209},
+      {n:'Cheese Mix Sauce Pasta', p:219, tag:'Bestseller'},
+    ]},
+    { id:'snacks', name:'Snacks & Momos', icon:'dumpling', items:[
+      {n:'Cheese Nuggets', p:109},
+      {n:'Veg Momos', p:99},
+      {n:'Paneer Momos', p:109},
+      {n:'Cheese Corn Momos', p:119},
+    ]},
+    { id:'pizza', name:'Pizza 8"', icon:'pizza', items:[
+      {n:'Pizza Margherita', p:159},
+      {n:'Classic Veg Pizza', p:169},
+      {n:'Cheese Corn Pizza', p:179},
+      {n:'Tandoori Paneer Pizza', p:179, spicy:true},
+      {n:'Paneer Do Pyaza Pizza', p:179},
+    ]},
+    { id:'garlic', name:'Garlic Bread (4 pcs)', icon:'bread', items:[
+      {n:'Garlic Toast', p:99},
+      {n:'Cheese Garlic Bread', p:119},
+      {n:'Chilli Cheese Garlic Bread', p:119, spicy:true},
+      {n:'Loaded Garlic Bread', p:149},
+    ]},
+    { id:'puff', name:'Puff', icon:'bread', items:[
+      {n:'Tandoori Chatpata Puff', p:79, spicy:true},
+      {n:'Firangi Puff', p:109},
+      {n:'Schezwan Cheese Puff', p:119, spicy:true},
+      {n:'Makhani Masala Puff', p:119},
+    ]},
+  ]},
+];
+
+/* ---------------- Render ---------------- */
+const main = document.getElementById('menuMain');
+const noResults = document.getElementById('noResults');
+const groupTabsEl = document.getElementById('groupTabs');
+const subNavEl = document.getElementById('subNav');
+
+MENU.forEach(g => {
+  const gid = g.group.toLowerCase();
+  const block = document.createElement('div');
+  block.className = 'group-block';
+  block.dataset.group = gid;
+
+  block.innerHTML = `<div class="group-title">${g.group}</div><div class="group-sub">${g.sub}</div>` +
+    (g.bannerIcons ? `<div class="group-banner" style="background:${g.bannerGrad}">${g.bannerIcons.map(i => icon(i)).join('')}</div>` : '');
+
+  g.categories.forEach(cat => {
+    const section = document.createElement('section');
+    section.className = 'category';
+    section.id = cat.id;
+    section.dataset.group = gid;
+
+    let itemsHtml = cat.items.map(it => `
+      <li data-search="${(it.n + ' ' + (it.desc||'')).toLowerCase()}">
+        <div class="row">
+          <span class="veg"></span>
+          <span class="item-name">${it.n}</span>
+          ${it.spicy ? spiceIcon : ''}
+          <span class="leader"></span>
+          <span class="price">₹${it.p}</span>
+        </div>
+        ${it.desc ? `<div class="item-desc">${it.desc}</div>` : ''}
+        ${it.tag ? `<span class="badge">${it.tag}</span>` : ''}
+      </li>`).join('');
+
+    let addonsHtml = '';
+    if (cat.addons) {
+      addonsHtml = `<div class="addon"><span class="addon-row"><b>Add on</b></span>` +
+        cat.addons.map(a => `<span class="addon-row">${a[0]} ₹${a[1]}</span>`).join('') + `</div>`;
+    }
+
+    section.innerHTML = `
+      <div class="cat-heading">${icon(cat.icon)}<span>${cat.name}</span></div>
+      <ul class="items">${itemsHtml}</ul>
+      ${addonsHtml}`;
+    block.appendChild(section);
+  });
+
+  main.insertBefore(block, noResults);
+});
+
+/* ---------------- Group tabs + subnav ---------------- */
+let activeGroup = MENU[0].group.toLowerCase();
+
+function renderGroupTabs(){
+  groupTabsEl.innerHTML = MENU.map(g => {
+    const gid = g.group.toLowerCase();
+    return `<button data-group="${gid}" class="${gid===activeGroup?'active':''}">${g.group}</button>`;
+  }).join('');
+}
+
+function renderSubNav(){
+  const g = MENU.find(g => g.group.toLowerCase() === activeGroup);
+  subNavEl.innerHTML = g.categories.map(cat =>
+    `<a href="#${cat.id}" data-cat="${cat.id}">${icon(cat.icon)}<span>${cat.name}</span></a>`
+  ).join('');
+}
+
+groupTabsEl.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  activeGroup = btn.dataset.group;
+  renderGroupTabs();
+  renderSubNav();
+  document.querySelector(`.group-block[data-group="${activeGroup}"] .group-title`)
+    .scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+subNavEl.addEventListener('click', e => {
+  const a = e.target.closest('a');
+  if (!a) return;
+  e.preventDefault();
+  document.getElementById(a.dataset.cat).scrollIntoView({ behavior:'smooth', block:'start' });
+});
+
+renderGroupTabs();
+renderSubNav();
+
+/* ---------------- Scroll spy ---------------- */
+const sections = Array.from(document.querySelectorAll('section.category'));
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const sec = entry.target;
+    const g = sec.dataset.group;
+    if (g !== activeGroup) {
+      activeGroup = g;
+      renderGroupTabs();
+      renderSubNav();
+    }
+    const link = subNavEl.querySelector(`a[data-cat="${sec.id}"]`);
+    if (link) {
+      subNavEl.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+      link.scrollIntoView({ behavior:'smooth', inline:'center', block:'nearest' });
+    }
+  });
+}, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+sections.forEach(s => spy.observe(s));
+
+/* ---------------- Entrance animation ---------------- */
+const reveal = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      reveal.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+sections.forEach(s => reveal.observe(s));
+
+/* ---------------- Search ---------------- */
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearSearch');
+
+function runSearch(){
+  const q = searchInput.value.trim().toLowerCase();
+  clearBtn.classList.toggle('show', q.length > 0);
+  let anyVisible = false;
+
+  document.querySelectorAll('.group-block').forEach(block => {
+    let groupHasVisible = false;
+    block.querySelectorAll('section.category').forEach(sec => {
+      let catHasVisible = false;
+      sec.querySelectorAll('ul.items li').forEach(li => {
+        const match = !q || li.dataset.search.includes(q);
+        li.classList.toggle('hidden', !match);
+        if (match) catHasVisible = true;
+      });
+      sec.classList.toggle('hidden', !catHasVisible);
+      if (catHasVisible) { groupHasVisible = true; anyVisible = true; sec.classList.add('in-view'); }
+    });
+    block.classList.toggle('hidden', !groupHasVisible);
+  });
+
+  noResults.classList.toggle('show', q.length > 0 && !anyVisible);
+}
+searchInput.addEventListener('input', runSearch);
+clearBtn.addEventListener('click', () => { searchInput.value=''; runSearch(); searchInput.focus(); });
+
+/* ---------------- Back to top ---------------- */
+const backToTop = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('show', window.scrollY > 700);
+});
+backToTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+/* ---------------- Theme toggle ---------------- */
+const themeToggle = document.getElementById('themeToggle');
+const iconMoon = document.getElementById('iconMoon');
+let isLight = false;
+themeToggle.addEventListener('click', () => {
+  isLight = !isLight;
+  document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+  iconMoon.innerHTML = isLight
+    ? '<circle cx="10" cy="10" r="4.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4"/>'
+    : '<path d="M16 11.5A6.5 6.5 0 0 1 8.5 4 6.5 6.5 0 1 0 16 11.5z"/>';
+});
+</script>
+
+</body>
+</html>
