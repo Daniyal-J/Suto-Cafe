@@ -266,30 +266,27 @@ async function getConfig(){
   try{
     const doc = await db.collection('config').doc('main').get();
     return doc.exists ? doc.data() : { cardSize: 7 };
-  }catch(e){ console.error('getConfig failed', e); return { cardSize: 7 }; }
+  }catch(e){ console.error('getConfig failed', e); showDbError(e); return { cardSize: 7 }; }
 }
 async function setConfig(cfg){
-  try{
-    await db.collection('config').doc('main').set(cfg);
-  }catch(e){ console.error('setConfig failed', e); }
+  await db.collection('config').doc('main').set(cfg); // let errors throw to caller
 }
 
 async function getCustomer(phone){
-  try{
-    const doc = await db.collection('customers').doc(phone.trim()).get();
-    return doc.exists ? doc.data() : null;
-  }catch(e){ console.error('getCustomer failed', e); return null; }
+  const doc = await db.collection('customers').doc(phone.trim()).get(); // let errors throw
+  return doc.exists ? doc.data() : null;
 }
 async function saveCustomer(c){
-  try{
-    await db.collection('customers').doc(c.phone.trim()).set(c);
-  }catch(e){ console.error('saveCustomer failed', e); }
+  await db.collection('customers').doc(c.phone.trim()).set(c); // let errors throw
 }
 async function listCustomers(){
-  try{
-    const snap = await db.collection('customers').orderBy('lastVisit', 'desc').get();
-    return snap.docs.map(d => d.data());
-  }catch(e){ console.error('listCustomers failed', e); return []; }
+  const snap = await db.collection('customers').orderBy('lastVisit', 'desc').get(); // let errors throw
+  return snap.docs.map(d => d.data());
+}
+
+function showDbError(e){
+  state.banner = { type:'warn', text: `Database error: ${e.code || e.message || e}. Check your Firestore Rules are published, and that ad blockers aren't blocking gstatic.com / firestore.googleapis.com.` };
+  render();
 }
 
 function todayStr(){ return new Date().toISOString().slice(0,10); }
@@ -457,10 +454,12 @@ function renderCardResult(){
         c.redeemedMilestones = c.redeemedMilestones || [];
         c.redeemedMilestones.push({ at, cycle: Math.floor(c.stamps / size) });
       }
-      await saveCustomer(c);
-      state.customer = c;
-      state.banner = { type:'success', text: `Redeemed: ${reward.label}. Show this screen to staff.<br><a href="${REVIEW_URL}" target="_blank" rel="noopener" style="color:#256A3B; font-weight:700;">Glad you stuck around — leave us a quick review? →</a>` };
-      render();
+      try{
+        await saveCustomer(c);
+        state.customer = c;
+        state.banner = { type:'success', text: `Redeemed: ${reward.label}. Show this screen to staff.<br><a href="${REVIEW_URL}" target="_blank" rel="noopener" style="color:#256A3B; font-weight:700;">Glad you stuck around — leave us a quick review? →</a>` };
+        render();
+      }catch(e){ showDbError(e); }
     };
   }
 }
@@ -542,11 +541,13 @@ async function attachHandlers(){
       const phone = document.getElementById('cardPhone').value.trim();
       if(!validPhone(phone)){ state.banner = {type:'warn', text:'Enter a valid phone number.'}; render(); return; }
       state.phone = phone;
-      const c = await getCustomer(phone);
-      state.customer = c;
-      state.banner = c ? null : {type:'info', text:'No card found for this number yet — check in at the counter to start one.'};
-      render();
-      renderCardResult();
+      try{
+        const c = await getCustomer(phone);
+        state.customer = c;
+        state.banner = c ? null : {type:'info', text:'No card found for this number yet — check in at the counter to start one.'};
+        render();
+        renderCardResult();
+      }catch(e){ showDbError(e); }
     };
     if(state.customer) renderCardResult();
   }
@@ -596,32 +597,35 @@ async function attachHandlers(){
   if(state.view === 'staff' && state.staffAuthed){
     document.querySelectorAll('.toggle-opt').forEach(t => t.onclick = async () => {
       state.config.cardSize = parseInt(t.dataset.size, 10);
-      await setConfig(state.config);
-      render();
+      try{ await setConfig(state.config); render(); }catch(e){ showDbError(e); }
     });
 
     document.getElementById('staffAddStamp').onclick = async () => {
       const phone = document.getElementById('staffPhone').value.trim();
       if(!validPhone(phone)){ state.banner = {type:'warn', text:'Enter a valid phone number.'}; render(); return; }
-      let c = await getCustomer(phone);
-      if(!c){ c = { phone, name:'Guest', stamps:0, history:[], createdAt: Date.now() }; }
-      c.stamps = (c.stamps||0) + 1;
-      c.lastVisit = Date.now();
-      c.history = c.history || [];
-      c.history.push({ type:'stamp', when: nowLabel() });
-      await saveCustomer(c);
-      state.banner = {type:'success', text:`Stamp added for ${phone}. Total: ${c.stamps}.`};
-      render();
+      try{
+        let c = await getCustomer(phone);
+        if(!c){ c = { phone, name:'Guest', stamps:0, history:[], createdAt: Date.now() }; }
+        c.stamps = (c.stamps||0) + 1;
+        c.lastVisit = Date.now();
+        c.history = c.history || [];
+        c.history.push({ type:'stamp', when: nowLabel() });
+        await saveCustomer(c);
+        state.banner = {type:'success', text:`Stamp added for ${phone}. Total: ${c.stamps}.`};
+        render();
+      }catch(e){ showDbError(e); }
     };
 
     document.getElementById('staffLookup').onclick = async () => {
       const phone = document.getElementById('staffPhone').value.trim();
       if(!validPhone(phone)){ state.banner = {type:'warn', text:'Enter a valid phone number.'}; render(); return; }
       state.view = 'card'; state.phone = phone;
-      const c = await getCustomer(phone);
-      state.customer = c;
-      render();
-      renderCardResult();
+      try{
+        const c = await getCustomer(phone);
+        state.customer = c;
+        render();
+        renderCardResult();
+      }catch(e){ showDbError(e); }
     };
 
     const url = new URL(location.href);
@@ -634,70 +638,81 @@ async function attachHandlers(){
 
     const tbody = document.getElementById('custTableBody');
     if(tbody){
-      const list = await listCustomers();
-      tbody.innerHTML = list.length ? list.map(c => `
-        <tr>
-          <td>${escapeHTML(c.name||'Guest')}</td>
-          <td>${c.phone}</td>
-          <td>${c.stamps||0}</td>
-          <td class="row-actions">
-            <button class="icon-btn amber" data-phone="${c.phone}" data-act="stamp">+1</button>
-            <button class="icon-btn" data-phone="${c.phone}" data-act="reset">Reset</button>
-          </td>
-        </tr>`).join('') : `<tr><td colspan="4" class="muted">No customers yet.</td></tr>`;
+      try{
+        const list = await listCustomers();
+        tbody.innerHTML = list.length ? list.map(c => `
+          <tr>
+            <td>${escapeHTML(c.name||'Guest')}</td>
+            <td>${c.phone}</td>
+            <td>${c.stamps||0}</td>
+            <td class="row-actions">
+              <button class="icon-btn amber" data-phone="${c.phone}" data-act="stamp">+1</button>
+              <button class="icon-btn" data-phone="${c.phone}" data-act="reset">Reset</button>
+            </td>
+          </tr>`).join('') : `<tr><td colspan="4" class="muted">No customers yet.</td></tr>`;
+      }catch(e){
+        tbody.innerHTML = `<tr><td colspan="4" class="muted">Couldn't load customers.</td></tr>`;
+        showDbError(e);
+      }
 
       tbody.querySelectorAll('button[data-act="stamp"]').forEach(b => b.onclick = async () => {
-        const c = await getCustomer(b.dataset.phone);
-        if(!c) return;
-        c.stamps = (c.stamps||0) + 1;
-        c.lastVisit = Date.now();
-        c.history = c.history || [];
-        c.history.push({ type:'stamp', when: nowLabel() });
-        await saveCustomer(c);
-        render();
+        try{
+          const c = await getCustomer(b.dataset.phone);
+          if(!c) return;
+          c.stamps = (c.stamps||0) + 1;
+          c.lastVisit = Date.now();
+          c.history = c.history || [];
+          c.history.push({ type:'stamp', when: nowLabel() });
+          await saveCustomer(c);
+          render();
+        }catch(e){ showDbError(e); }
       });
       tbody.querySelectorAll('button[data-act="reset"]').forEach(b => b.onclick = async () => {
-        const c = await getCustomer(b.dataset.phone);
-        if(!c) return;
-        c.stamps = 0;
-        c.history = c.history || [];
-        c.history.push({ type:'redeem', label:'Manual reset', when: nowLabel() });
-        await saveCustomer(c);
-        render();
+        try{
+          const c = await getCustomer(b.dataset.phone);
+          if(!c) return;
+          c.stamps = 0;
+          c.history = c.history || [];
+          c.history.push({ type:'redeem', label:'Manual reset', when: nowLabel() });
+          await saveCustomer(c);
+          render();
+        }catch(e){ showDbError(e); }
       });
     }
   }
 }
 
 async function runCheckin(phone, name){
-  let c = await getCustomer(phone);
-  const today = todayStr();
-  if(!c){
-    c = { phone, name, stamps:0, history:[], createdAt: Date.now(), lastStampDate:'' };
-  }
-  if(c.lastStampDate === today){
+  try{
+    let c = await getCustomer(phone);
+    const today = todayStr();
+    if(!c){
+      c = { phone, name, stamps:0, history:[], createdAt: Date.now(), lastStampDate:'' };
+    }
+    if(c.lastStampDate === today){
+      state.phone = phone;
+      state.customer = c;
+      state.banner = {type:'warn', text:"You've already collected today's stamp. Come back tomorrow!"};
+      state.view = 'card';
+      render();
+      renderCardResult();
+      return;
+    }
+    c.stamps = (c.stamps||0) + 1;
+    c.lastStampDate = today;
+    c.lastVisit = Date.now();
+    c.name = name || c.name;
+    c.history = c.history || [];
+    c.history.push({ type:'stamp', when: nowLabel() });
+    await saveCustomer(c);
+
     state.phone = phone;
     state.customer = c;
-    state.banner = {type:'warn', text:"You've already collected today's stamp. Come back tomorrow!"};
+    state.banner = {type:'success', text:'Stamp collected! Thanks for visiting Suto Cafe.'};
     state.view = 'card';
     render();
     renderCardResult();
-    return;
-  }
-  c.stamps = (c.stamps||0) + 1;
-  c.lastStampDate = today;
-  c.lastVisit = Date.now();
-  c.name = name || c.name;
-  c.history = c.history || [];
-  c.history.push({ type:'stamp', when: nowLabel() });
-  await saveCustomer(c);
-
-  state.phone = phone;
-  state.customer = c;
-  state.banner = {type:'success', text:'Stamp collected! Thanks for visiting Suto Cafe.'};
-  state.view = 'card';
-  render();
-  renderCardResult();
+  }catch(e){ showDbError(e); }
 }
 
 render();
