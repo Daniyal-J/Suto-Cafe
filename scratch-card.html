@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Suto Cafe — Scratch &amp; Win</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2748;
+    --blue:#2C63A8;
+    --blue-bright:#4C86D6;
+    --sky:#EAF2FB;
+    --white:#FFFFFF;
+    --ink:#122038;
+    --tomato:#C1442B;
+    --gold:#D9A75A;
+    --line:rgba(15,39,72,0.12);
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(76,134,214,0.25), transparent 55%),
+      var(--navy);
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 18px;
+  }
+  h1,h2,.display{ font-family:'Baloo 2', sans-serif; }
+
+  .wrap{ width:100%; max-width:400px; text-align:center; }
+  .brand{ color:var(--white); font-weight:800; font-size:1.9rem; letter-spacing:0.5px; }
+  .tagline{ color:#BFD6F2; font-size:0.85rem; font-weight:600; margin-top:2px; margin-bottom:22px; }
+
+  .card-shell{
+    background:var(--white);
+    border-radius:22px;
+    padding:22px 20px 26px;
+    box-shadow:0 24px 50px -20px rgba(0,0,0,0.5);
+    position:relative;
+  }
+  .card-shell::before{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:22px;
+    border:2px dashed rgba(15,39,72,0.15);
+    margin:8px;
+    pointer-events:none;
+  }
+  .ticket-title{ font-weight:700; font-size:1.05rem; color:var(--navy); margin-bottom:2px; }
+  .ticket-sub{ font-size:0.78rem; color:#6b7a91; margin-bottom:16px; }
+
+  .scratch-area{
+    position:relative;
+    width:100%;
+    aspect-ratio: 4 / 3;
+    border-radius:16px;
+    overflow:hidden;
+    background:var(--sky);
+    touch-action:none;
+    user-select:none;
+  }
+  .prize-layer{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    gap:6px;
+    padding:16px;
+    text-align:center;
+    background:linear-gradient(160deg, #EAF2FB, #FFFFFF);
+  }
+  .prize-icon{ font-size:2.2rem; line-height:1; }
+  .prize-label{ font-weight:800; font-size:1.3rem; color:var(--navy); font-family:'Baloo 2', sans-serif; }
+  .prize-note{ font-size:0.78rem; color:#6b7a91; }
+
+  canvas{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    cursor:pointer;
+  }
+
+  .hint{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:8px;
+    color:rgba(255,255,255,0.92);
+    pointer-events:none;
+    font-weight:700;
+    font-size:0.95rem;
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:0.55; } 50%{ opacity:1; } }
+  .hint svg{ width:34px; height:34px; }
+
+  .status{
+    margin-top:16px;
+    font-size:0.85rem;
+    color:#6b7a91;
+    min-height:20px;
+  }
+
+  .redeem-box{
+    display:none;
+    margin-top:16px;
+    background:var(--sky);
+    border:1.5px dashed var(--blue);
+    border-radius:14px;
+    padding:14px 16px;
+  }
+  .redeem-box.show{ display:block; animation:pop .35s ease; }
+  @keyframes pop{ 0%{ transform:scale(0.9); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  .redeem-code{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:1.1rem;
+    color:var(--navy);
+    letter-spacing:1px;
+  }
+  .redeem-note{ font-size:0.75rem; color:#6b7a91; margin-top:4px; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:100%;
+    margin-top:16px;
+    padding:13px 16px;
+    border-radius:12px;
+    border:none;
+    font-weight:700;
+    font-size:14.5px;
+    cursor:pointer;
+    background:var(--blue);
+    color:var(--white);
+    font-family:'Inter', sans-serif;
+  }
+  .btn:active{ transform:scale(0.98); }
+  .btn.secondary{
+    background:transparent;
+    color:#BFD6F2;
+    border:1px solid rgba(255,255,255,0.35);
+    margin-top:10px;
+  }
+
+  .footer-note{
+    margin-top:20px;
+    color:#7FA0CC;
+    font-size:0.72rem;
+    line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">SUTO</div>
+  <div class="tagline">Jee Bhar Ke — Scratch &amp; Win</div>
+
+  <div class="card-shell">
+    <div class="ticket-title">Your one scratch card</div>
+    <div class="ticket-sub">Scratch the silver panel below to reveal your prize</div>
+
+    <div class="scratch-area" id="scratchArea">
+      <div class="prize-layer" id="prizeLayer">
+        <div class="prize-icon" id="prizeIcon">🎁</div>
+        <div class="prize-label" id="prizeLabel">Loading…</div>
+        <div class="prize-note" id="prizeNote"></div>
+      </div>
+      <canvas id="scratchCanvas"></canvas>
+      <div class="hint" id="hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11.5V6a2 2 0 1 1 4 0v5.5M13 11.5V5a2 2 0 1 1 4 0v6.5M17 12v-2a2 2 0 1 1 4 0v5c0 3.9-3.1 7-7 7h-2c-2.4 0-4-1-5.5-3l-3-4.2c-.6-.9-.3-2 .6-2.5.8-.5 1.9-.3 2.5.5l1.4 1.9"/></svg>
+        <span>Scratch with your finger</span>
+      </div>
+    </div>
+
+    <div class="status" id="statusText">Keep going… almost there</div>
+
+    <div class="redeem-box" id="redeemBox">
+      <div class="redeem-code" id="redeemCode">SUTO-0000</div>
+      <div class="redeem-note">Show this screen to the cashier on your next visit to redeem.</div>
+    </div>
+  </div>
+
+  <button class="btn secondary" id="resetBtn">🔁 Try a new card (testing only)</button>
+
+  <div class="footer-note">
+    One scratch card per customer per visit.<br>
+    This is a test build — not yet linked to a live database.
+  </div>
+</div>
+
+<script>
+/* ---------------- prize pool ---------------- */
+/* weight = relative chance out of the total. Higher weight = more common. */
+const PRIZES = [
+  { label: "Better Luck Next Time", icon: "🍀", weight: 35, note: "No prize this time — try again on your next visit!" },
+  { label: "2% Off Your Order",     icon: "🎫", weight: 15, note: "Show this at checkout on your next order." },
+  { label: "5% Off Your Order",     icon: "🎫", weight: 15, note: "Show this at checkout on your next order." },
+  { label: "Free Extra Shot",       icon: "☕", weight: 10, note: "One free extra shot added to any coffee." },
+  { label: "10% Off Your Order",    icon: "🏷️", weight: 8,  note: "Show this at checkout on your next order." },
+  { label: "Free Fries",            icon: "🍟", weight: 6,  note: "One free regular fries with any order." },
+  { label: "Free Dessert",          icon: "🍰", weight: 4,  note: "One free dessert of the day." },
+  { label: "Buy 1 Get 1 Coffee",    icon: "☕", weight: 3,  note: "Buy any coffee, get one free." },
+  { label: "Free Coffee",           icon: "☕", weight: 3,  note: "One free coffee, any size." },
+  { label: "Free Combo (Jackpot!)", icon: "🎉", weight: 1,  note: "Free fries + drink combo. Lucky you!" },
+];
+
+function pickPrize(){
+  const total = PRIZES.reduce((s,p)=>s+p.weight, 0);
+  let r = Math.random() * total;
+  for(const p of PRIZES){
+    if(r < p.weight) return p;
+    r -= p.weight;
+  }
+  return PRIZES[0];
+}
+
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = 'SUTO-';
+  for(let i=0;i<5;i++) out += chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
+
+/* ---------------- state ---------------- */
+let prize = pickPrize();
+let revealed = false;
+let redeemCodeValue = genCode();
+
+const prizeIcon = document.getElementById('prizeIcon');
+const prizeLabel = document.getElementById('prizeLabel');
+const prizeNote = document.getElementById('prizeNote');
+const statusText = document.getElementById('statusText');
+const redeemBox = document.getElementById('redeemBox');
+const redeemCode = document.getElementById('redeemCode');
+const hint = document.getElementById('hint');
+const scratchArea = document.getElementById('scratchArea');
+const canvas = document.getElementById('scratchCanvas');
+const ctx = canvas.getContext('2d');
+
+function loadPrizeIntoDOM(){
+  prizeIcon.textContent = prize.icon;
+  prizeLabel.textContent = prize.label;
+  prizeNote.textContent = prize.note;
+  redeemCode.textContent = redeemCodeValue;
+}
+
+function sizeCanvas(){
+  const rect = scratchArea.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawScratchLayer(rect.width, rect.height);
+}
+
+function drawScratchLayer(w, h){
+  ctx.globalCompositeOperation = 'source-over';
+  const grad = ctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#B9C6D6');
+  grad.addColorStop(0.5, '#8FA0B8');
+  grad.addColorStop(1, '#B9C6D6');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 2;
+  for(let i = -h; i < w; i += 14){
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i + h, h);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = 'rgba(15,39,72,0.55)';
+  ctx.font = '700 14px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('SUTO CAFE', w/2, h/2 - 6);
+  ctx.font = '600 11px Inter, sans-serif';
+  ctx.fillText('scratch here', w/2, h/2 + 12);
+}
+
+function scratchAt(x, y){
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath();
+  ctx.arc(x, y, 22, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function getPointerPos(e){
+  const rect = canvas.getBoundingClientRect();
+  const point = e.touches ? e.touches[0] : e;
+  return { x: point.clientX - rect.left, y: point.clientY - rect.top };
+}
+
+let isDown = false;
+let scratchTick = 0;
+
+function handleStart(e){
+  if(revealed) return;
+  isDown = true;
+  hint.style.display = 'none';
+  const p = getPointerPos(e);
+  scratchAt(p.x, p.y);
+}
+function handleMove(e){
+  if(!isDown || revealed) return;
+  e.preventDefault();
+  const p = getPointerPos(e);
+  scratchAt(p.x, p.y);
+  scratchTick++;
+  if(scratchTick % 6 === 0) checkRevealProgress();
+}
+function handleEnd(){
+  isDown = false;
+  checkRevealProgress();
+}
+
+canvas.addEventListener('mousedown', handleStart);
+canvas.addEventListener('mousemove', handleMove);
+window.addEventListener('mouseup', handleEnd);
+canvas.addEventListener('touchstart', handleStart, { passive:true });
+canvas.addEventListener('touchmove', handleMove, { passive:false });
+canvas.addEventListener('touchend', handleEnd);
+
+function checkRevealProgress(){
+  const w = canvas.width, h = canvas.height;
+  const data = ctx.getImageData(0, 0, w, h).data;
+  let cleared = 0;
+  const step = 40; // sample every Nth pixel for performance
+  let sampled = 0;
+  for(let i = 3; i < data.length; i += 4 * step){
+    sampled++;
+    if(data[i] < 40) cleared++;
+  }
+  const pct = cleared / sampled;
+  if(pct > 0.5 && !revealed){
+    revealFully();
+  }
+}
+
+function revealFully(){
+  revealed = true;
+  canvas.style.transition = 'opacity .5s ease';
+  canvas.style.opacity = '0';
+  setTimeout(() => { canvas.style.pointerEvents = 'none'; }, 500);
+  statusText.textContent = prize.label === 'Better Luck Next Time'
+    ? 'No prize this time — good luck next visit!'
+    : 'You won! Screenshot this before you leave.';
+  if(prize.label !== 'Better Luck Next Time'){
+    redeemBox.classList.add('show');
+  }
+}
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  prize = pickPrize();
+  redeemCodeValue = genCode();
+  revealed = false;
+  scratchTick = 0;
+  loadPrizeIntoDOM();
+  canvas.style.transition = 'none';
+  canvas.style.opacity = '1';
+  canvas.style.pointerEvents = 'auto';
+  redeemBox.classList.remove('show');
+  hint.style.display = 'flex';
+  statusText.textContent = 'Keep going… almost there';
+  sizeCanvas();
+});
+
+loadPrizeIntoDOM();
+sizeCanvas();
+window.addEventListener('resize', () => { if(!revealed) sizeCanvas(); });
+</script>
+</body>
+</html>
