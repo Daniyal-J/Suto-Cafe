@@ -288,8 +288,17 @@ function drawScratchLayer(w, h){
 function scratchAt(x, y){
   ctx.globalCompositeOperation = 'destination-out';
   ctx.beginPath();
-  ctx.arc(x, y, 22, 0, Math.PI * 2);
+  ctx.arc(x, y, 34, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function scratchLine(x0, y0, x1, y1){
+  const dist = Math.hypot(x1 - x0, y1 - y0);
+  const steps = Math.max(1, Math.ceil(dist / 8)); // dense enough to avoid gaps at any speed
+  for(let i = 0; i <= steps; i++){
+    const t = i / steps;
+    scratchAt(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
+  }
 }
 
 function getPointerPos(e){
@@ -300,24 +309,32 @@ function getPointerPos(e){
 
 let isDown = false;
 let scratchTick = 0;
+let lastPos = null;
 
 function handleStart(e){
   if(revealed) return;
   isDown = true;
   hint.style.display = 'none';
   const p = getPointerPos(e);
+  lastPos = p;
   scratchAt(p.x, p.y);
 }
 function handleMove(e){
   if(!isDown || revealed) return;
   e.preventDefault();
   const p = getPointerPos(e);
-  scratchAt(p.x, p.y);
+  if(lastPos){
+    scratchLine(lastPos.x, lastPos.y, p.x, p.y);
+  } else {
+    scratchAt(p.x, p.y);
+  }
+  lastPos = p;
   scratchTick++;
-  if(scratchTick % 6 === 0) checkRevealProgress();
+  if(scratchTick % 3 === 0) checkRevealProgress();
 }
 function handleEnd(){
   isDown = false;
+  lastPos = null;
   checkRevealProgress();
 }
 
@@ -332,14 +349,14 @@ function checkRevealProgress(){
   const w = canvas.width, h = canvas.height;
   const data = ctx.getImageData(0, 0, w, h).data;
   let cleared = 0;
-  const step = 40; // sample every Nth pixel for performance
+  const step = 80; // sample every Nth pixel — lighter on slower phones
   let sampled = 0;
   for(let i = 3; i < data.length; i += 4 * step){
     sampled++;
     if(data[i] < 40) cleared++;
   }
   const pct = cleared / sampled;
-  if(pct > 0.5 && !revealed){
+  if(pct > 0.35 && !revealed){
     revealFully();
   }
 }
